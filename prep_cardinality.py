@@ -18,7 +18,7 @@ def write_pointers_to_file(sen_rel_list):
     output_list = [str(line) for line in sen_rel_list]
     with open("./cardinality/pointers.txt", 'w') as fp:
         fp.write('\n'.join(output_list))
-    os.system("cp ~/robust-vcm/cardinality/pointers.txt ~/imdb/")
+    os.system("cp ./cardinality/pointers.txt /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/")
     return
 
 
@@ -41,7 +41,7 @@ def prep_basic_sensitive_rel_id(num_of_base_rel, num_of_join_rel):
 '''
 Generate the raw size of each table by checking the dict with the table name as the key.
 '''
-def get_raw_table_size(sql, ins_id=None, db_name='imdbloadbase', output_file=None):
+def get_raw_table_size(sql, ins_id=None, db_name='imdbload', output_file=None):
     raw_size_list = get_raw_size_from_txt()
     if output_file:
         raw_size_list = [str(i) for i in raw_size_list]
@@ -55,9 +55,9 @@ Instead of reading estimated cardinality from file, generate the list by
 execute the sql and read the result from xxx.txt which is output by psql
 '''
 def ori_cardest(db_name, sql):
-    os.system("rm ~/imdb/single_tbl_est_record.txt")
-    os.system("rm ~/imdb/join_est_record_job.txt")
-    conn = psycopg2.connect(host="/tmp", dbname=db_name, user="hx68")
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt")
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt")
+    conn = psycopg2.connect(host="0.0.0.0", port=5432, dbname=db_name, user="postgres", password="postgres")
     conn.set_session(autocommit=True)
     cursor = conn.cursor()
     cursor.execute('SET enable_material = off')
@@ -69,7 +69,7 @@ def ori_cardest(db_name, sql):
     cursor.execute("Explain " + sql)
     
 
-    with open('/winhomes/hx68/imdb/single_tbl_est_record.txt') as f:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt') as f:
         single = f.readlines()
     estimate_single = []
     for line in single:
@@ -77,9 +77,11 @@ def ori_cardest(db_name, sql):
             l = line.split('rows=')[1].split('width')[0].strip()
             estimate_single.append(int(l))
     
-    with open('/winhomes/hx68/imdb/join_est_record_job.txt') as f:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt') as f:
         join = f.readlines()
-    estimate_join = [] # all info for join_rel, contains: leftrows, rightrows, estjoinrows
+
+    # all info for join_rel, contains: leftrows, rightrows, estjoinrows
+    estimate_join = []
 
     flag = 0
     for line_id in range(len(join)):
@@ -108,9 +110,9 @@ def ori_cardest(db_name, sql):
 
 
 def get_maps(db_name, sql, debug=False):
-    os.system("rm ~/imdb/single_tbl_est_record.txt")
-    os.system("rm ~/imdb/join_est_record_job.txt")
-    conn = psycopg2.connect(host="/tmp", dbname=db_name, user="hx68")
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt")
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt")
+    conn = psycopg2.connect(host="0.0.0.0", port=5432, dbname=db_name, user="postgres", password="postgres")
     conn.set_session(autocommit=True)
     cursor = conn.cursor()
     cursor.execute('SET enable_material = off')
@@ -121,7 +123,7 @@ def get_maps(db_name, sql, debug=False):
     cursor.execute("SET ml_joinest_enabled=false;")
     cursor.execute("EXPLAIN " + sql)
 
-    with open('/winhomes/hx68/imdb/single_tbl_est_record.txt') as f:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt') as f:
         single = f.readlines()
     estimate_single = []
     tname_id_dict = {}
@@ -140,7 +142,7 @@ def get_maps(db_name, sql, debug=False):
     maps = [[-1] * single_table_num for _ in range(single_table_num)]
 
 
-    with open('/winhomes/hx68/imdb/join_est_record_job.txt') as f:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt') as f:
         join = f.readlines()
     join_relation_list = []
     join_relation_counter = 0

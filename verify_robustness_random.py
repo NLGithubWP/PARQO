@@ -15,7 +15,7 @@ def get_count(cursor_, table_name):
 
 
 def verify_by_multiple_random_instances(i, window_size):
-    db_name = "imdbloadbase"
+    db_name = "imdbload"
     conn = psycopg2.connect("host=/tmp dbname=" + db_name)
     conn.set_session(autocommit=True)
     cursor_ = conn.cursor()
@@ -367,7 +367,7 @@ def verify_by_multiple_random_instances(i, window_size):
 
 
 def drop_table(new_tables):
-    db_name = "imdbloadbase"
+    db_name = "imdbload"
     conn = psycopg2.connect("host=/tmp dbname=" + db_name)
     conn.set_session(autocommit=True)
     cursor_ = conn.cursor()
@@ -428,9 +428,9 @@ for s in range(0, 4):
     # verify_by_multiple_random_instances(i, 20)
     for query_id in ["17a"]:
     # for query_id in ["1a", "2a","3a","4a","5a","6a","7a", "14a", "15a", "16a", "17a", "18a", "25a"]:
-        os.system("rm -rf ~/imdb/recordx.log")
+        os.system("rm -rf /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/recordx.log")
         print(query_id)
-        db_name = "imdbloadbase"
+        db_name = "imdbload"
         explain = "EXPLAIN (SUMMARY, COSTS, FORMAT JSON)"
         with open('./query/join-order-benchmark/' + query_id + '.sql') as p:
             sql = p.read()

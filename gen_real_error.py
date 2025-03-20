@@ -355,7 +355,7 @@ def cal_local_selectivity(local_template, full_table_template):
 
 def get_est_act_count(template):
     if db=='imdb':
-        join_plans = get_real_latency('imdbloadbase', template, times=1, return_json=True, limit_time=False, limit_worker=True, drop_buffer=False)
+        join_plans = get_real_latency('imdbload', template, times=1, return_json=True, limit_time=False, limit_worker=True, drop_buffer=False)
     else:
         join_plans = get_real_latency(db, template, times=1, return_json=True, limit_time=False, limit_worker=True, drop_buffer=False)
 

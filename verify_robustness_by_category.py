@@ -5,7 +5,7 @@ from utility import modify_query, get_count
 
 
 def verify_by_movie_category(i):
-    db_name = "imdbloadbase"
+    db_name = "imdbload"
     conn = psycopg2.connect("host=/tmp dbname=" + db_name)
     conn.set_session(autocommit=True)
     cursor_ = conn.cursor()
@@ -335,7 +335,7 @@ def verify_by_movie_category(i):
 
 
 def drop_table(new_tables):
-    db_name = "imdbloadbase"
+    db_name = "imdbload"
     conn = psycopg2.connect("host=/tmp dbname=" + db_name)
     conn.set_session(autocommit=True)
     cursor_ = conn.cursor()
@@ -384,8 +384,8 @@ for i in range(1, 8):
     # for query_id in ["2a", "15a", "17a", "26a"]:
     for query_id in ["2a"]:
 
-        os.system("rm -rf ~/imdb/recordx.log")
-        db_name = "imdbloadbase"
+        os.system("rm -rf /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/recordx.log")
+        db_name = "imdbload"
         explain = "EXPLAIN (SUMMARY, COSTS, FORMAT JSON)"
         with open('./query/join-order-benchmark/' + query_id + '.sql') as p:
             sql = p.read()

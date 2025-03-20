@@ -15,17 +15,19 @@ def DropBufferCache(cursor_):
     cursor_.execute('DISCARD ALL;')
 
 
-def get_real_latency(db_name, sql, hint=None, times=5, inject=False, output_plan=False, query_id=None, return_json=False, limit_time=10000, limit_worker=False, drop_buffer=True):
+def get_real_latency(db_name, sql, hint=None, times=5, inject=False, output_plan=False, query_id=None,
+                     return_json=False, limit_time=10000, limit_worker=False, drop_buffer=True):
     # TODO inject or not is meaning less
-    conn = psycopg2.connect(host="/tmp", dbname=db_name, user="hx68")
+    conn = psycopg2.connect(host="0.0.0.0", port=5432, dbname=db_name, user="postgres", password="postgres")
     conn.set_session(autocommit=True)
     cursor_ = conn.cursor()
-    os.system("cp ~/robust-vcm/cardinality/new_single.txt ~/imdb/")
+    os.system(
+        "cp ./cardinality/new_single.txt /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/")
 
     explain = "EXPLAIN (ANALYZE, SUMMARY, COSTS, FORMAT JSON)"
     latency_list = []
     rows_list = []
-    
+
     for i in range(times):
         if drop_buffer: DropBufferCache(cursor_)
         if inject:
@@ -40,8 +42,6 @@ def get_real_latency(db_name, sql, hint=None, times=5, inject=False, output_plan
         if limit_worker:
             cursor_.execute('SET max_parallel_workers_per_gather = 0;')
 
-            
-        
         if hint:
             hint = hint
         else:
@@ -63,7 +63,7 @@ def get_real_latency(db_name, sql, hint=None, times=5, inject=False, output_plan
         latency_list.append(cur_latency)
         if cur_latency > 600000:
             return cur_latency
-    
+
     if output_plan:
         join_order, _, scan_mtd = decode(query_plan[0][0][0]['Plan']['Plans'], query_plan[0][0][0]['Plan']['Node Type'])
         print(join_order)
@@ -74,7 +74,6 @@ def get_real_latency(db_name, sql, hint=None, times=5, inject=False, output_plan
     return np.median(np.array(latency_list))
 
 
-
 def get_plan_cost_simple(cursor, sql, hint=None, debug=None, explain=None):
     cursor.execute('DISCARD ALL;')
     cursor.execute('SET enable_material = off')
@@ -82,7 +81,6 @@ def get_plan_cost_simple(cursor, sql, hint=None, debug=None, explain=None):
     cursor.execute("SET ml_cardest_enabled=false;")
     cursor.execute("LOAD 'pg_hint_plan';")
     cursor.execute("SET ml_joinest_enabled=false;")
-
 
     try:
         if hint:
@@ -94,20 +92,22 @@ def get_plan_cost_simple(cursor, sql, hint=None, debug=None, explain=None):
         cost = query_plan[0][0][0]['Plan']['Total Cost']
         join_order, _, scan_mtd = decode(query_plan[0][0][0]['Plan']['Plans'], query_plan[0][0][0]['Plan']['Node Type'])
 
-    except psycopg2.OperationalError as e:            
+    except psycopg2.OperationalError as e:
         print(to_execute_)
-    except psycopg2.errors.SyntaxError as e:            
+    except psycopg2.errors.SyntaxError as e:
         print(to_execute_)
     if debug:
         return cost, join_order, scan_mtd
     return cost
 
 
-
 def get_plan_cost(cursor, sql, hint=None, debug=None, explain=None):
-    os.system("cp ~/robust-vcm/cardinality/join.txt ~/imdb/")
-    os.system("cp ~/robust-vcm/cardinality/new_single.txt ~/imdb/")
-    os.system("cp ~/robust-vcm/cardinality/pointers.txt ~/imdb")
+    os.system(
+        "cp ./cardinality/join.txt /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/")
+    os.system(
+        "cp ./cardinality/new_single.txt /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/")
+    os.system(
+        "cp ./cardinality/pointers.txt /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data")
     cursor.execute('DISCARD ALL;')
     cursor.execute('SET enable_material = off')
     # cursor.execute('SET top_n = 0')
@@ -119,9 +119,9 @@ def get_plan_cost(cursor, sql, hint=None, debug=None, explain=None):
     cursor.execute("SET ml_joinest_enabled=true;")
     cursor.execute("SET join_est_no=0;")
     cursor.execute("SET ml_joinest_fname='join.txt';")
-    
-    os.system("rm ~/imdb/join_est_record_job.txt")
-    os.system("rm ~/imdb/single_tbl_est_record.txt")
+
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt")
+    os.system("rm /Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt")
     cursor.execute("SET print_single_tbl_queries=true;")
     cursor.execute("SET print_sub_queries=true;")
 
@@ -135,9 +135,9 @@ def get_plan_cost(cursor, sql, hint=None, debug=None, explain=None):
         cost = query_plan[0][0][0]['Plan']['Total Cost']
         join_order, _, scan_mtd = decode(query_plan[0][0][0]['Plan']['Plans'], query_plan[0][0][0]['Plan']['Node Type'])
 
-    except psycopg2.OperationalError as e:            
+    except psycopg2.OperationalError as e:
         print(to_execute_)
-    except psycopg2.errors.SyntaxError as e:            
+    except psycopg2.errors.SyntaxError as e:
         print(to_execute_)
     if debug:
         return cost, join_order, scan_mtd
@@ -156,18 +156,19 @@ def get_all_predicates(cursor, sql, explain):
     try:
         to_execute_ = explain + '\n' + sql
         cursor.execute(to_execute_)
-    except psycopg2.OperationalError as e:            
+    except psycopg2.OperationalError as e:
         print(to_execute_)
-    except psycopg2.errors.SyntaxError as e:            
+    except psycopg2.errors.SyntaxError as e:
         print(to_execute_)
-        
+
 
 def get_all_plan_cost(cursor, sql, explain, cur_plan_list, debug=False):
     ### At current card, which plan is the best
-    opt_cost_list = []    
+    opt_cost_list = []
     for hint_id in range(len(cur_plan_list)):
         hint = cur_plan_list[hint_id]
-        cost_with_hint, join_order_with_hint, scan_mtd_with_hint = get_plan_cost(cursor, sql=sql, hint=hint, explain=explain, debug=True)
+        cost_with_hint, join_order_with_hint, scan_mtd_with_hint = get_plan_cost(cursor, sql=sql, hint=hint,
+                                                                                 explain=explain, debug=True)
         if debug:
             print(hint_id, ": ", cost_with_hint, join_order_with_hint, scan_mtd_with_hint)
         opt_cost_list.append(cost_with_hint)

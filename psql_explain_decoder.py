@@ -67,7 +67,7 @@ def decode(plans, parent, file_name=None):
             join_conds.append(node_type + merge_cond)
             single_scans.extend(_single_scans)
             join_order += ')'
-        elif node_type in ['Index Scan', 'Seq Scan', 'Bitmap Scan', 'Index Only Scan']:
+        elif node_type in ['Index Scan', 'Seq Scan', 'Bitmap Scan', 'Index Only Scan', "Bitmap Heap Scan"]:
             # TODO
             join_order += plans[i]['Alias']
         else:
@@ -228,7 +228,7 @@ def build_scan_methods(input_string):
 
 
 # # Read the input from "/winhomes/hx68/imdbtmp_plan.txt"
-# with open("/winhomes/hx68/imdb/record.txt") as f:
+# with open("//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/record.txt") as f:
 #     input_string = f.read()
 
 # # Build the plan tree and print the serialized plan

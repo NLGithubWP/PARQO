@@ -164,7 +164,6 @@ def gen_center_from_err_dist(est_card, raw_card, cur_dim, err_info_dict, num_of_
                     err_sample = pdf_of_err.sample(num_of_samples)
                     # err_sample = [sum(err_info_dict[table_id][0]) / len(err_info_dict[table_id][0])]
 
-                
                 mean = sum(err_sample) / len(err_sample)
                 if naive:
                     center.append(mean)
@@ -424,11 +423,11 @@ def get_error_dict_from_txt():
     alias_dict = {}
     basic_tables = {'u': 'users', 'c': 'comments','b': 'badges','ph': 'postHistory','p': 'posts','pl': 'postLinks','v': 'votes',}
     # Read the content of the first text file
-    with open('/winhomes/hx68/imdb/single_tbl_est_record.txt', 'r') as file:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt', 'r') as file:
         single = file.read()
 
     # Read the content of the second text file
-    with open('/winhomes/hx68/imdb/join_est_record_job.txt', 'r') as file:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/join_est_record_job.txt', 'r') as file:
         join = file.read()
 
     # Extract query numbers and corresponding filenames from the first text file using regular expressions
@@ -480,7 +479,7 @@ def get_error_dict_from_txt():
 def get_raw_size_from_txt():
 
     # Read the content of the file
-    with open('/winhomes/hx68/imdb/single_tbl_est_record.txt', 'r') as file:
+    with open('//Users/kevin/project_python/AI4QueryOptimizer/AI4QueryOptimizer/psql/data/single_tbl_est_record.txt', 'r') as file:
         content = file.read()
 
     # Extract raw rows from each query block using regular expressions

@@ -10,14 +10,14 @@ err_files_dict_job['17'] = {
                         1: 'cn.txt', 
                         2: 'k.txt',
                         5: 'n.txt',
-                        7: 'ci_mc__q17.txt', 
-                        8: 'mk_ci__q17.txt', 
-                        9: 'n_ci_l.txt', 
+                            7: 'ci_mc__q17.txt',
+                            8: 'mk_ci__q17.txt',
+                    9: 'n_ci_l.txt',
                         10: 't_ci__n.txt',
-                        11: 'mc_cn_r.txt', 
-                        12: 'mk_k_r.txt', 
-                        13: 'mk_mc__q2.txt',
-                        14: 't_mc__cn.txt', 
+                    11: 'mc_cn_r.txt',
+                    12: 'mk_k_r.txt',
+                            13: 'mk_mc__q2.txt',
+                        14: 't_mc__cn.txt',
                         15: 't_mk__k.txt',
                         }
 
@@ -1483,7 +1483,7 @@ def prepare_error_data(db_name, query_id, max_sel=1.0, min_sel = 0.0, rel_error=
 
     count = 0
 
-    if db_name == 'imdbloadbase':
+    if db_name == 'imdbload':
         query_id = get_pure_q_id(query_id, db_name)
         if pqo:
             files_prefix = './data/abs-error-imdb-saved/'
@@ -1514,11 +1514,11 @@ def prepare_error_data(db_name, query_id, max_sel=1.0, min_sel = 0.0, rel_error=
                 if rel_error:
                     if float(line[0]) == 0 or 0 == float(line[1]):
                         continue
+                    # true, estimate, those are got from previous steps.
                     error = cal_rel_error(float(line[0]), float(line[1]))
                 else:
                     ### err = true - est
                     error = float(line[0]) - float(line[1])
-
                 sel_est_list.append((float(line[1]), error))
                 error_list.append(error)
                 count += 1
